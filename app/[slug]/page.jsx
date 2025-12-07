@@ -189,6 +189,30 @@ const Page = ({ params }) => {
                                 }}
                             ></div>
                         </div>
+
+                        {/* Book Details Grid */}
+                        <div className="mt-8 grid grid-cols-2 gap-4">
+                            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+                                <h3 className="text-sm font-poppins-bold text-gray-600 mb-1">Author</h3>
+                                <p className="text-lg font-poppins-medium">{bookById.author}</p>
+                            </div>
+                            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+                                <h3 className="text-sm font-poppins-bold text-gray-600 mb-1">Publisher</h3>
+                                <p className="text-lg font-poppins-medium">{bookById.publisher}</p>
+                            </div>
+                            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+                                <h3 className="text-sm font-poppins-bold text-gray-600 mb-1">Year</h3>
+                                <p className="text-lg font-poppins-medium">{bookById.year}</p>
+                            </div>
+                            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+                                <h3 className="text-sm font-poppins-bold text-gray-600 mb-1">Pages</h3>
+                                <p className="text-lg font-poppins-medium">{bookById.pages}</p>
+                            </div>
+                            <div className="p-4 border border-gray-300 rounded-lg bg-white">
+                                <h3 className="text-sm font-poppins-bold text-gray-600 mb-1">ISBN</h3>
+                                <p className="text-lg font-poppins-medium">{bookById.isbn}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
