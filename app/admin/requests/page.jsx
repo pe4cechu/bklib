@@ -1,16 +1,25 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useSession } from '@/app/context/SessionProvider';
 
 const statusStyles = {
     pending: { label: 'Pending', chip: 'bg-amber-50 border-amber-200 text-amber-800' },
     approved: { label: 'Approved', chip: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
     rejected: { label: 'Rejected', chip: 'bg-rose-50 border-rose-200 text-rose-800' },
+    returned: { label: 'Returned', chip: 'bg-blue-50 border-blue-200 text-blue-800' },
+};
+
+const returnStatusStyles = {
+    borrowed: { label: 'Borrowed', chip: 'bg-purple-50 border-purple-200 text-purple-800' },
+    pending_return: { label: 'Pending Return', chip: 'bg-orange-50 border-orange-200 text-orange-800' },
+    returned: { label: 'Returned', chip: 'bg-blue-50 border-blue-200 text-blue-800' },
 };
 
 const AdminRequestsPage = () => {
     const { user, loading } = useSession();
+    const isAdminOrManager = user?.role === 'admin' || user?.role === 'manager';
     const [requests, setRequests] = useState([]);
     const [fetching, setFetching] = useState(true);
     const [error, setError] = useState(null);
@@ -34,10 +43,10 @@ const AdminRequestsPage = () => {
     };
 
     useEffect(() => {
-        if (!loading && (user?.role === 'admin' || user?.privilege === 'admin')) {
+        if (!loading && isAdminOrManager) {
             loadRequests();
         }
-    }, [loading, user]);
+    }, [loading, isAdminOrManager]);
 
     const updateStatus = async (id, status) => {
         try {
@@ -46,9 +55,59 @@ const AdminRequestsPage = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, status }),
             });
-            if (!res.ok) throw new Error('Failed to update status');
+            
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || 'Failed to update status');
+            }
+            
             const data = await res.json();
             setRequests((prev) => prev.map((r) => (r._id === id ? data.request : r)));
+            
+            // Sync book availability to database when request is approved or rejected
+            try {
+                const updatedRequest = data.request;
+                const booksRes = await fetch('/api/books');
+                if (booksRes.ok) {
+                    const booksData = await booksRes.json();
+                    const books = booksData.book || [];
+                    
+                    // Fetch all requests to recalculate borrowed quantities
+                    const allRequestsRes = await fetch('/api/admin/requests');
+                    const allRequestsData = await allRequestsRes.json();
+                    const allRequests = allRequestsData.requests || [];
+                    
+                    // Calculate borrowed quantities
+                    const borrowedMap = {};
+                    allRequests.forEach((req) => {
+                        if (req.status === 'approved') {
+                            borrowedMap[req.bookTitle] = (borrowedMap[req.bookTitle] || 0) + req.quantity;
+                        }
+                    });
+                    
+                    // Find the book that was in the updated request and update its availability
+                    const book = books.find((b) => b.title === updatedRequest.bookTitle);
+                    if (book) {
+                        const borrowed = borrowedMap[book.title] || 0;
+                        const available = borrowed < book.quantity;
+                        
+                        // Only update if availability changed
+                        if (available !== book.available) {
+                            await fetch('/api/books', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    id: book._id,
+                                    available: available,
+                                }),
+                            });
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to sync book availability:', err);
+            }
+            
             toast.success(`Request ${status}`);
         } catch (err) {
             toast.error(err.message);
@@ -94,17 +153,18 @@ const AdminRequestsPage = () => {
     };
 
     const summary = useMemo(() => {
-        const counts = { all: requests.length, pending: 0, approved: 0, rejected: 0 };
+        const counts = { all: requests.length, pending: 0, approved: 0, rejected: 0, returned: 0 };
         requests.forEach((r) => {
             counts[r.status] = (counts[r.status] || 0) + 1;
         });
         return counts;
-    }, [requests]);
+    }, [requests]); 
 
-    if (!user || (user.role !== 'admin' && user.privilege !== 'admin')) return <p className="text-center py-10">Unauthorized</p>;
+    if (!user || (user.role !== 'admin' && user.role !== 'manager')) return <p className="text-center py-10">Unauthorized</p>;
 
     return (
         <div className="container mx-auto px-4 py-10 space-y-6">
+            <ToastContainer position="top-center" />
             <div className="bg-gradient-to-r from-[#0179ca] to-[#00a7d9] text-white rounded-2xl p-6 shadow-lg">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                     <div>
@@ -121,8 +181,8 @@ const AdminRequestsPage = () => {
                         <span className="absolute right-3 top-2.5 text-white/80 text-sm"></span>
                     </div>
                 </div>
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                    {[['all', 'All'], ['pending', 'Pending'], ['approved', 'Approved'], ['rejected', 'Rejected']].map(([key, label]) => (
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+                    {[['all', 'All'], ['pending', 'Pending'], ['approved', 'Approved'], ['rejected', 'Rejected'], ['returned', 'Returned']].map(([key, label]) => (
                         <button
                             key={key}
                             type="button"
@@ -165,7 +225,7 @@ const AdminRequestsPage = () => {
                         <tbody className="bg-white divide-y divide-gray-200">
                             {sorted.length === 0 && (
                                 <tr>
-                                    <td colSpan="7" className="text-center py-6 text-gray-500">No requests found.</td>
+                                    <td colSpan="8" className="text-center py-6 text-gray-500">No requests found.</td>
                                 </tr>
                             )}
                             {sorted.map((req) => (
@@ -195,17 +255,24 @@ const AdminRequestsPage = () => {
                                         <div className="flex justify-center gap-2">
                                         <button
                                             onClick={() => updateStatus(req._id, 'approved')}
-                                            disabled={req.status === 'approved'}
+                                            disabled={req.status === 'approved' || req.status === 'returned'}
                                             className="px-3 py-1 rounded-full text-xs font-semibold border border-emerald-200 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-40"
                                         >
                                             Approve
                                         </button>
                                         <button
                                             onClick={() => updateStatus(req._id, 'rejected')}
-                                            disabled={req.status === 'rejected'}
+                                            disabled={req.status === 'rejected' || req.status === 'returned'}
                                             className="px-3 py-1 rounded-full text-xs font-semibold border border-rose-200 text-rose-700 bg-rose-50 hover:bg-rose-100 disabled:opacity-40"
                                         >
                                             Reject
+                                        </button>
+                                        <button
+                                            onClick={() => updateStatus(req._id, 'returned')}
+                                            disabled={req.status === 'returned' || req.status !== 'approved'}
+                                            className="px-3 py-1 rounded-full text-xs font-semibold border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 disabled:opacity-40"
+                                        >
+                                            Return
                                         </button>
                                         </div>
                                     </td>

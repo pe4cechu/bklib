@@ -118,7 +118,7 @@ export default function RegisterPage() {
                         type="submit"
                         disabled={loading}
                         aria-busy={loading}
-                        className="w-full p-2 bg-[#0179ca] text-white font-poppins-bold rounded-xl disabled:opacity-60 flex items-center justify-center space-x-2"
+                        className="group relative overflow-hidden w-full p-2 bg-black hover:bg-[#0179ca] text-white font-poppins-bold rounded-xl disabled:opacity-60 flex items-center justify-center space-x-2"
                     >
                         {loading ? (
                             <>
@@ -126,7 +126,15 @@ export default function RegisterPage() {
                                 <span>Registering...</span>
                             </>
                         ) : (
-                            'Register'
+                            <>
+                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+                                    Register
+                                </span>
+                                <span className="absolute inset-0 flex items-center justify-center transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                    Register
+                                </span>
+                                <span className="invisible">Register</span>
+                            </>
                         )}
                     </button>
                 </form>

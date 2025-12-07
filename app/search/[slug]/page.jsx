@@ -32,7 +32,7 @@ const SearchPage = ({ params }) => {
     });
 
     return (
-        <div>
+        <div className="py-10">
             <Book items={items} />
         </div>
     );

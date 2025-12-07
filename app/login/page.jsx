@@ -2,7 +2,8 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Loader from './../components/Loader';
 
 export default function LoginPage() {
@@ -51,6 +52,7 @@ export default function LoginPage() {
 
     return (
         <div className="max-w-md mx-auto mt-10">
+            <ToastContainer position="top-center" />
             <div className="bg-white text-black p-6 rounded-xl border border-gray-300">
                 <h1 className="text-2xl font-poppins-bold mb-4">Login</h1>
                 <form onSubmit={handleSubmit} className="space-y-3 font-poppins-normal">
@@ -76,7 +78,7 @@ export default function LoginPage() {
                         type="submit"
                         disabled={loading}
                         aria-busy={loading}
-                        className="w-full p-2 bg-[#0179ca] text-white font-poppins-bold rounded-xl disabled:opacity-60 flex items-center justify-center space-x-2"
+                        className="group relative overflow-hidden w-full p-2 bg-black hover:bg-[#0179ca] text-white font-poppins-bold rounded-xl disabled:opacity-60 flex items-center justify-center space-x-2"
                     >
                         {loading ? (
                             <>
@@ -84,7 +86,15 @@ export default function LoginPage() {
                                 <span>Logging...</span>
                             </>
                         ) : (
-                            'Login'
+                            <>
+                                <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+                                    Login
+                                </span>
+                                <span className="absolute inset-0 flex items-center justify-center transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                                    Login
+                                </span>
+                                <span className="invisible">Login</span>
+                            </>
                         )}
                     </button>
                 </form>

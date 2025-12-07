@@ -105,7 +105,7 @@ const page = () => {
     }, [showSearchBar]);
 
     return (
-        <div>
+        <div className="pb-10">
             {/* Filter system */}
             <div className="container mx-auto my-8 px-4">
                 <div className="bg-white text-black p-6 rounded-xl border border-gray-300">
@@ -140,7 +140,7 @@ const page = () => {
             {showBorrowModal && selectedBook && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                        <h3 className="text-lg font-medium mb-3">Request to borrow "{selectedBook.title ?? selectedBook.name}"</h3>
+                        <h3 className="text-lg font-medium mb-3 truncate">Request to borrow "{selectedBook.title ?? selectedBook.name}"</h3>
                         <form onSubmit={submitBorrowRequest} className="space-y-3">
                             <input required value={borrowForm.name} onChange={(e) => setBorrowForm({ ...borrowForm, name: e.target.value })} placeholder="Your name" className="w-full border px-3 py-2 rounded" />
                             <input required value={borrowForm.contact} onChange={(e) => setBorrowForm({ ...borrowForm, contact: e.target.value })} placeholder="Contact (email/phone)" className="w-full border px-3 py-2 rounded" />

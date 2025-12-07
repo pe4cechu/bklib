@@ -3,11 +3,12 @@
 import Link from 'next/link';
 import React, { useState, useRef, useEffect } from 'react';
 import logo from '@/app/public/icons/logo.svg';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from '@/app/context/SessionProvider';
 
 const Navbar = () => {
     const router = useRouter();
+    const pathname = usePathname();
     const { user, logout: sessionLogout } = useSession();
     const [open, setOpen] = useState(false);
     const avatarRef = useRef(null);
@@ -57,32 +58,67 @@ const Navbar = () => {
             <div className="flex items-center w-full">
                 <div className="pl-20">
                     <Link href="/">
-                        <img src={logo.src} alt="Logo" className="w-20 h-20" />
+                        <img src={logo.src} alt="Logo" className="w-16 h-16" />
                     </Link>
                 </div>
 
-                <ul className="flex text-[17px] font-poppins-normal space-x-14 justify-center flex-grow text-[#212121]">
+                <ul className="flex font-poppins-normal space-x-14 justify-center flex-grow text-[#212121]">
                     <li>
-                        <Link href="/notice">Notice</Link>
+                        <Link href="/notice" className={`relative pb-1 ${pathname === '/notice' ? 'text-[#0179ca]' : ''}`}>
+                            Notice
+                            {pathname === '/notice' && (
+                                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                            )}
+                        </Link>
                     </li>
-                    {!(user?.role === 'admin' || user?.privilege === 'admin') && (
+                    {!(user?.role === 'admin' || user?.privilege === 'admin' || user?.role === 'manager') && (
                         <li>
-                            <Link href="/books">Books</Link>
+                            <Link href="/books" className={`relative pb-1 ${pathname === '/books' ? 'text-[#0179ca]' : ''}`}>
+                                Books
+                                {pathname === '/books' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                                )}
+                            </Link>
                         </li>
                     )}
-                    {!(user?.role === 'admin' || user?.privilege === 'admin') && (
+                    {!(user?.role === 'admin' || user?.privilege === 'admin' || user?.role === 'manager') && (
                         <li>
-                            <Link href="/requests">Requests</Link>
+                            <Link href="/requests" className={`relative pb-1 ${pathname === '/requests' ? 'text-[#0179ca]' : ''}`}>
+                                Requests
+                                {pathname === '/requests' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                                )}
+                            </Link>
+                        </li>
+                    )}
+                    {(user?.role === 'admin' || user?.privilege === 'admin' || user?.role === 'manager') && (
+                        <li>
+                            <Link href="/admin/books" className={`relative pb-1 ${pathname === '/admin/books' ? 'text-[#0179ca]' : ''}`}>
+                                Books
+                                {pathname === '/admin/books' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                                )}
+                            </Link>
+                        </li>
+                    )}
+                    {(user?.role === 'admin' || user?.privilege === 'admin' || user?.role === 'manager') && (
+                        <li>
+                            <Link href="/admin/requests" className={`relative pb-1 ${pathname === '/admin/requests' ? 'text-[#0179ca]' : ''}`}>
+                                Requests
+                                {pathname === '/admin/requests' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                                )}
+                            </Link>
                         </li>
                     )}
                     {(user?.role === 'admin' || user?.privilege === 'admin') && (
                         <li>
-                            <Link href="/admin/books">Books</Link>
-                        </li>
-                    )}
-                    {(user?.role === 'admin' || user?.privilege === 'admin') && (
-                        <li>
-                            <Link href="/admin/requests">Requests</Link>
+                            <Link href="/admin/users" className={`relative pb-1 ${pathname === '/admin/users' ? 'text-[#0179ca]' : ''}`}>
+                                Users
+                                {pathname === '/admin/users' && (
+                                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0179ca] rounded-full"></span>
+                                )}
+                            </Link>
                         </li>
                     )}
                 </ul>
@@ -92,7 +128,7 @@ const Navbar = () => {
                     <div className="relative" ref={avatarRef}>
                         <button
                             onClick={() => setOpen((s) => !s)}
-                            className="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center focus:outline-none"
+                            className="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center focus:outline-none"
                             aria-expanded={open}
                             aria-haspopup="true"
                         >

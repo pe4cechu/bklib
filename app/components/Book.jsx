@@ -6,7 +6,7 @@ import { ToastContainer, toast, Bounce } from 'react-toastify';
 const Book = ({ items }) => {
     if (items.length === 0)
         return (
-            <h1 className="text-center my-5" style={{ marginTop: '15rem' }}>
+            <h1 className="text-center font-poppins-bold text-xl my-5" style={{ marginTop: '15rem' }}>
                 No books found.
             </h1>
         );
@@ -44,7 +44,7 @@ const Book = ({ items }) => {
                                     </div>
                                 </Link>
                                 <div className="card-body text-[#212121]">
-                                    <h5 className="card-title font-poppins-bold text-lg">
+                                    <h5 className="card-title font-poppins-bold text-lg truncate">
                                         {book.title}
                                     </h5>
                                     <p className="card-text font-poppins-medium">

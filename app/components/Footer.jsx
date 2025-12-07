@@ -3,9 +3,7 @@ import Link from 'next/link';
 
 const Footer = () => {
     return (
-        <div className="flex flex-col min-h-screen">
-            <div className="flex-grow">{/* Your page content goes here */}</div>
-            <footer className="z-10 text-gray-600 body-font bg-black">
+        <footer className="z-10 text-gray-600 body-font bg-black">
                 <div className="container px-5 py-5 mx-auto flex items-center sm:flex-row flex-col">
                     <Link
                         href="/"
@@ -14,15 +12,7 @@ const Footer = () => {
                         <span className="text-xl font-poppins-bold">BKLib</span>
                     </Link>
                     <p className="text-sm text-gray-100 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200 sm:py-2 sm:mt-0 mt-4">
-                        © 2025 BKLib —
-                        <Link
-                            href="/"
-                            className="text-gray-100 ml-1"
-                            rel="noopener noreferrer"
-                            target="_blank"
-                        >
-                            Nhóm 6
-                        </Link>
+                        © 2025 BKLib
                     </p>
                     <span className="inline-flex sm:ml-auto sm:mt-0 mt-4 justify-center sm:justify-start">
                         <a
@@ -92,7 +82,6 @@ const Footer = () => {
                     </span>
                 </div>
             </footer>
-        </div>
     );
 };
 

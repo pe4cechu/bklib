@@ -18,7 +18,7 @@ const getUserFromCookie = async () => {
 
 const requireAdmin = async () => {
     const user = await getUserFromCookie();
-    const isAdmin = user && user.role === 'admin';
+    const isAdmin = user && (user.role === 'admin' || user.role === 'manager');
     if (!isAdmin) {
         return { error: new Response(JSON.stringify({ message: 'Unauthorized' }), { status: 401 }) };
     }

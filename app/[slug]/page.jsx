@@ -44,6 +44,12 @@ const Page = ({ params }) => {
     }, [params, books]);
 
     const handleBorrow = () => {
+        // Check if book is available
+        if (!bookById.available) {
+            toast.error('This book is currently unavailable for borrowing.');
+            return;
+        }
+        
         // Open the filling form modal
         setShowForm(true);
         setSuccess(null);
@@ -104,7 +110,7 @@ const Page = ({ params }) => {
         }
     };
 
-    if (!bookById) return <p className="text-center my-5">No books found.</p>;
+    if (!bookById) return <p className="text-center font-poppins-bold text-xl my-5">No books found.</p>;
 
     return (
         <div className="text-gray-900">
@@ -156,7 +162,8 @@ const Page = ({ params }) => {
                         <div className="flex pb-11 space-x-4">
                             <button
                                 onClick={handleBorrow}
-                                className="group relative flex items-center bg-black text-white px-8 py-4 rounded-full font-poppins-bold hover:bg-[#0179ca] transition cursor-pointer overflow-hidden"
+                                disabled={!bookById.available}
+                                className="group relative flex items-center bg-black text-white px-8 py-4 rounded-full font-poppins-bold hover:bg-[#0179ca] transition cursor-pointer overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{ minWidth: '185px', minHeight: '42px' }}
                             >
                                 <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">

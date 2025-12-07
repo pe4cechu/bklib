@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
                 <link rel="icon" href={favicon.src} />
                 <title>BKLib</title>
             </head>
-            <body>
+            <body className="flex flex-col min-h-screen">
                 <SessionProvider>
                     <BookProvider>
                         <ToastContainer
@@ -37,7 +37,9 @@ export default function RootLayout({ children }) {
                         />
                         <PageLoadToast />
                         <Navbar />
-                        {children}
+                        <main className="flex-grow">
+                            {children}
+                        </main>
                         <Footer />
                     </BookProvider>
                 </SessionProvider>

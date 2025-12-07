@@ -8,7 +8,8 @@ const RequestSchema = new mongoose.Schema({
     quantity: { type: Number, required: true },
     dateReturn: { type: Date, required: true },
     note: { type: String },
-    status: { type: String, default: 'pending' },
+    status: { type: String, default: 'pending' }, // pending, approved, rejected, returned
+    returnStatus: { type: String, default: 'borrowed' }, // borrowed, pending_return, returned
     createdAt: { type: Date, default: Date.now },
 });
 

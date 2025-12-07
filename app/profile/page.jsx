@@ -41,7 +41,7 @@ export default function ProfilePage() {
                         <p className="w-full p-2 bg-gray-100 rounded-xl">{user.email}</p>
                     </div>
                     <div>
-                        <label className="font-poppins-semi-bold">Student ID</label>
+                        <label className="font-poppins-semi-bold">ID</label>
                         <p className="w-full p-2 bg-gray-100 rounded-xl">{user.studentId || 'N/A'}</p>
                     </div>
                 </div>
