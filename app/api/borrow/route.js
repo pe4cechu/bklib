@@ -14,6 +14,7 @@ const getUserFromCookie = async () => {
         const { payload } = await jwtVerify(session.value, secret);
         return payload;
     } catch (err) {
+        console.error('JWT verification error:', err.message);
         return null;
     }
 };
@@ -45,12 +46,12 @@ export async function POST(request) {
         await connectDB();
 
         const doc = await Request.create({
-            userId: user.id || user._id,
+            userId: user._id?.toString?.() || String(user._id),
             userEmail: user.email,
             name: user.name,
             bookTitle,
             quantity: parsedQuantity,
-            dateReturn,
+            dateReturn: new Date(dateReturn),
             note,
         });
         return NextResponse.json({ message: 'Saved to MongoDB', id: doc._id }, { status: 200 });

@@ -2,18 +2,18 @@ import mongoose from 'mongoose';
 
 const bookSchema = new mongoose.Schema(
     {
-        title: { type: String, require: true },
-        category: { type: String, require: true },
-        author: { type: String, require: true },
-        imgSrc: { type: String, require: true },
-        available: { type: Boolean, require: true },
-        description: { type: String, require: true },
-        other_images: { type: [String], require: true },
-        year: { type: String, require: true },
-        isbn: { type: String, require: true },
-        pages: { type: Number, require: true },
-        publisher: { type: String, require: true },
-        quantity: { type: Number, require: true },
+        title: { type: String, required: true },
+        category: { type: String, required: true },
+        author: { type: String, required: true },
+        imgSrc: { type: String, required: true },
+        available: { type: Boolean, required: true },
+        description: { type: String, required: true },
+        other_images: { type: [String], required: true },
+        year: { type: String, required: true },
+        isbn: { type: String, required: true },
+        pages: { type: Number, required: true },
+        publisher: { type: String, required: true },
+        quantity: { type: Number, required: true },
     },
     { timestamps: true }
 );

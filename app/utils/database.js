@@ -6,12 +6,15 @@ const connectDB = async () => {
         return;
     }
 
-    mongoose
+    return mongoose
         .connect('mongodb+srv://peacechu:Liminated123@greenly.9nt7y6k.mongodb.net/', {
             dbName: 'BKLib',
         })
         .then((msg) => console.log('MongodB Connected Successfully...!'))
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+            console.log(err.message);
+            throw err;
+        });
 };
 
 export default connectDB;
